@@ -45,7 +45,7 @@ fun GoldPrices() {
 			Text(
 				modifier = Modifier
 					.fillMaxWidth(),
-				text = "Current Gold Prices",
+				text = "Current Gold Prices!!",
 				fontSize = 24.sp,
 				fontStyle = FontStyle.Normal,
 				fontWeight = FontWeight.Bold,
