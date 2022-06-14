@@ -6,3 +6,6 @@ import androidx.compose.runtime.Composable
 fun HomeScreen() {
 	GoldPrices()
 }
+
+// https://github.com/JerryApplegarth/Gold-Prices.git
+// git push plus http above
