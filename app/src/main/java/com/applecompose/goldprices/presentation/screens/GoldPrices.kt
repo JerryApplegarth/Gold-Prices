@@ -1,123 +1,82 @@
 package com.applecompose.goldprices.presentation.screens
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.applecompose.goldprices.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.applecompose.goldprices.data.api.model.Rates
+import com.applecompose.goldprices.ui.theme.newBackgroundColor
 
 @Composable
 fun GoldPrices() {
 
+	val metalsViewModel = viewModel(modelClass = MetalsViewModel::class.java)
+	val state by metalsViewModel.state.collectAsState()
 
-	val scaffoldState = rememberScaffoldState()
-	val scope = rememberCoroutineScope()
-
-	Scaffold(
-		scaffoldState = scaffoldState,
-		topBar = { TopBar(scaffoldState = scaffoldState, scope = scope) },
-		drawerContent = { DrawerContent() },
-		bottomBar = { SimpleBottomBar() }
-
-	) {
-		Box(
-			modifier = Modifier
-				.fillMaxSize()
-				.padding(16.dp)
-
-		) {
-			Text(
-				modifier = Modifier
-					.fillMaxWidth(),
-				text = "Current Gold Prices!!",
-				fontSize = 24.sp,
-				fontStyle = FontStyle.Normal,
-				fontWeight = FontWeight.Bold,
-				fontFamily = FontFamily.Monospace,
-				textAlign = TextAlign.Center
-			)
-		}
-	}
-}
-
-
-@Composable
-fun TopBar(scaffoldState: ScaffoldState, scope: CoroutineScope) {
-	TopAppBar(
-		title = { Text(text = "Scaffold Example", color = Color.White) },
-		navigationIcon = {
-			IconButton(onClick = {
-				scope.launch {
-					scaffoldState.drawerState.open()
-				}
-			}) {
-				Icon(
-					painter = painterResource(id = R.drawable.ic_menu),
-					contentDescription = "menu"
+	LazyColumn {
+		if (state.isEmpty()) {
+			item {
+				CircularProgressIndicator(
+					modifier = Modifier
+						.fillMaxSize()
+						.wrapContentSize(align = Alignment.Center)
 				)
 			}
-		},
-		elevation = 8.dp
-	)
-}
+			items(state) {rates: Rates ->
+				MetalImageCard(rates = rates)
 
-@Composable
-fun DrawerContent() {
-	for (i in 0 until 5) {
-		Text(text = "Item $i")
-	}
-}
+			}
 
-	data class BottomBarItem(val title: String, @DrawableRes val icon: Int)
-
-@Composable
-fun SimpleBottomBar() {
-	val items = listOf(
-		BottomBarItem("Home", R.drawable.ic_home),
-		BottomBarItem("Favourite", R.drawable.ic_person),
-		BottomBarItem("Profile", R.drawable.ic_person),
-		BottomBarItem("Search", R.drawable.ic_search),
-	)
-	BottomNavigation(elevation = 8.dp) {
-		items.map {
-			BottomNavigationItem(
-				selected = false,
-				onClick = { },
-				icon = {
-					Icon(
-						painter = painterResource(id = it.icon),
-						contentDescription = it.title
-					)
-				},
-				label = { Text(text = it.title) },
-				selectedContentColor = Color.White,
-				unselectedContentColor = Color.White.copy(0.4f)
-
-			)
 		}
 	}
 }
 
+@Composable
+fun MetalImageCard(rates: Rates) {
 
-	@Preview(showBackground = true)
-	@Composable
-	fun ScaffoldExamplesPreview() {
-		GoldPrices()
+	Card(
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(8.dp)
+			.background(MaterialTheme.colors.newBackgroundColor),
+		shape = RoundedCornerShape(16.dp)
+	) {
+		Text(
+			text = "Gold: ${rates.XAU}",
+			fontSize = 20.sp,
+			fontFamily = FontFamily.Monospace,
+			fontWeight = FontWeight.Bold
+			)
+		Text(
+			text = "Gold: ${rates.XAG}",
+			fontSize = 20.sp,
+			fontFamily = FontFamily.Monospace,
+			fontWeight = FontWeight.Bold
+		)
+
+
 	}
+
+
+
+
+}
 
